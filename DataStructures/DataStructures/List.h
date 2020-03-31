@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <exception> // ჩავრთოთ გამონაკლისების ბიბლიოთეკა იმისთვის რომ გამონაკლისი ვისროლოთ
 
-
 template <typename T>
 class List
 {
@@ -9,7 +8,7 @@ private:
 	int _size = 0; //  მასივის მოცულობას აღნიშნავს
 	T* _collection = nullptr;
 	int _count = 0; // მასივში მიმდინარე ელემენტების რაოდენობას აღნიშნავს
-	
+
 public:
 	// default კონსტრუქტორი
 	List()
@@ -22,9 +21,7 @@ public:
 		if (size <= 0)
 			throw std::exception("size must be more than zero");
 		_size = size;
-		_collection = new T[_size ]; // დინამიური მასივი
-
-		_collection = alloc.allocate(_size);
+		_collection = new T[_size]; // დინამიური მასივი
 	}
 
 	// copy კონსტრუქტორი
@@ -156,7 +153,7 @@ public:
 		return -1;
 	}
 
-	// მოძებნის პირველივე შემხვედრ ელემენტს რომელიც აკმაყოფილებს predicate პირობას. 
+	// მოძებნის პირველივე შემხვედრ ელემენტს რომელიც აკმაყოფილებს predicate პირობას.
 	// თუ იპოვა დააბრუნებს მის ინდექსს თუ ვერა დააბრუნებს -1-ს;
 	template <typename Predicate>
 	int Find(Predicate predicate) const
@@ -171,7 +168,7 @@ public:
 		return -1;
 	}
 
-	// მოძებნის ბოლო შემხვედრ ელემენტს რომელიც აკმაყოფილებს predicate პირობას. 
+	// მოძებნის ბოლო შემხვედრ ელემენტს რომელიც აკმაყოფილებს predicate პირობას.
 	// თუ იპოვა დააბრუნებს მის ინდექსს თუ ვერა დააბრუნებს -1-ს;
 	template <typename Predicate>
 	int FindLast(Predicate predicate) const
@@ -221,7 +218,7 @@ public:
 		if (_collection == nullptr)
 		{
 			_size = 4;
-			_collection = T[_size];
+			_collection = new T[_size];
 		}
 		else if (_count == _size)
 		{
@@ -235,7 +232,7 @@ public:
 		_count++;
 	}
 
-	// ფუნქცია მასივში ამატებს ელემენტს მითითებულ ინდექსზე. 
+	// ფუნქცია მასივში ამატებს ელემენტს მითითებულ ინდექსზე.
 	// თუ არ ყოფნის არსებული კოლექცია ქმნის ახალს
 	void Insert(int index, T element)
 	{
@@ -251,7 +248,7 @@ public:
 		if (_count == _size)
 		{
 			_size *= 2;
-			T* newCollection = T[_size];
+			T* newCollection = new T[_size];
 
 			// გადმოვიტანოთ პირველი ნაწილი ახალ კოლექციაში
 			for (int i = 0; i < index; i++)
@@ -294,7 +291,7 @@ public:
 		}
 	}
 
-	// ცვლის მასივის მოცულობას. 
+	// ცვლის მასივის მოცულობას.
 	// მოცულობას ხდის size-ის ტოლს იმ შემთხვევაში თუ არსებული მოცულობა size-ზე ნაკლებია.
 	// სხვა შემთხვევაში არაფერი არ ხდება.
 	// მაგ.: თუ იყო 50 და size = 100 გახდება 100; თუ იყო 100 და size = 50 ყველაფერი იგივე დარჩება
@@ -347,7 +344,7 @@ public:
 private:
 	void ReallocateInternal()
 	{
-		T* newCollection = T[_size];
+		T* newCollection = new T[_size];
 		for (int i = 0; i < _count; i++)
 		{
 			newCollection[i] = _collection[i];
@@ -355,5 +352,4 @@ private:
 		delete[] _collection;
 		_collection = newCollection;
 	}
-
 };
