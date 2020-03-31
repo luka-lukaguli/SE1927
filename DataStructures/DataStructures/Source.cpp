@@ -3,6 +3,7 @@
 #include <exception> // ჩავრთოთ გამონაკლისების ბიბლიოთეკა იმისთვის რომ გამონაკლისი ვისროლოთ
 #include "List.h"
 #include "Array.h"
+#include "String.h"
 
 using namespace std;
 
@@ -78,5 +79,16 @@ void PrintProduct(const Product& prod)
 
 int main()
 {
+	String text = "Hello world";
+	String other = "hallo";
+
+	String smallText = text.Substring(0, 5);
+
+	cout << smallText << " compare " << text << ": " << smallText.Compare(text) << endl;
+	cout << text << " compare " << smallText << ": " << text.Compare(smallText) << endl;
+	cout << text << " compare " << text << ": " << text.Compare(text) << endl;
+
+	cout << smallText << " compare " << other << ": " << smallText.Compare(other);
+
 	return 0;
 }
