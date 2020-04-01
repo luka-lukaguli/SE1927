@@ -27,11 +27,11 @@ public:
 	// copy კონსტრუქტორი
 	List(const List& other)
 	{
-		_size = other._size;
+		_size = other._count;
 		_count = other._count;
 		_collection = new T[_size];
 
-		for (int i = 0; i < _size; i++)
+		for (int i = 0; i < _count; i++)
 		{
 			_collection[i] = other._collection[i];
 		}
@@ -48,7 +48,7 @@ public:
 	{
 		delete[] _collection;
 
-		_size = other._size;
+		_size = other._count;
 		_count = other._count;
 
 		if (other._collection == nullptr)
@@ -59,7 +59,7 @@ public:
 
 		_collection = new T[_size];
 
-		for (int i = 0; i < _size; i++)
+		for (int i = 0; i < _count; i++)
 		{
 			_collection[i] = other._collection[i];
 		}
@@ -130,7 +130,7 @@ public:
 
 	int IndexOf(T element)
 	{
-		for (int i = 0; i < _size; i++)
+		for (int i = 0; i < _count; i++)
 		{
 			if (_collection[i] == element)
 			{
@@ -158,7 +158,7 @@ public:
 	template <typename Predicate>
 	int Find(Predicate predicate) const
 	{
-		for (int i = 0; i < _size; i++)
+		for (int i = 0; i < _count; i++)
 		{
 			if (predicate(_collection[i]))
 			{
@@ -187,9 +187,9 @@ public:
 	template <typename Comparer>
 	void Sort(Comparer comparer)
 	{
-		for (int i = 0; i < _size - 1; i++)
+		for (int i = 0; i < _count - 1; i++)
 		{
-			for (int j = i + 1; j < _size; j++)
+			for (int j = i + 1; j < _count; j++)
 			{
 				if (comparer(_collection[j], _collection[i]))
 				{
@@ -206,7 +206,7 @@ public:
 	template <typename Action>
 	void Foreach(Action executeAction)
 	{
-		for (int i = 0; i < _size; i++)
+		for (int i = 0; i < _count; i++)
 		{
 			executeAction(i, _collection[i]);
 		}

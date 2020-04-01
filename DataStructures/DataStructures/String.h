@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <exception>
 #include <iostream>
+#include "List.h"
 
 class String
 {
@@ -16,12 +17,24 @@ public:
 
 	String(const String& other)
 	{
-		InitializeInternal(other._length, other._length + 1);
-
-		for (int i = 0; i < _capacity; i++)
+		if (!other.IsEmpty())
 		{
-			_text[i] = other._text[i];
+			InitializeInternal(other._length, other._length + 1);
+
+			for (int i = 0; i < _capacity; i++)
+			{
+				_text[i] = other._text[i];
+			}
 		}
+	}
+
+	String(String&& other)
+	{
+		_text = other._text;
+		_length = other._length;
+		_capacity = other._capacity;
+
+		other._text = nullptr;
 	}
 
 	String(const char* text)
@@ -42,7 +55,7 @@ public:
 		InitializeInternal(length, capacity);
 	}
 
-	const String& operator=(const char* text)
+	String operator=(const char* text)
 	{
 		if (text == nullptr)
 			throw std::exception("text can not be nullptr");
@@ -57,7 +70,7 @@ public:
 		return *this;
 	}
 
-	const String& operator=(const String& other)
+	String operator=(const String& other)
 	{
 		if (other._text == nullptr)
 		{
@@ -74,6 +87,19 @@ public:
 		{
 			_text[i] = other._text[i];
 		}
+		return *this;
+	}
+
+	String operator=(String&& other)
+	{
+		delete[] _text;
+
+		_text = other._text;
+		_length = other._length;
+		_capacity = other._capacity;
+
+		other._text = nullptr;
+
 		return *this;
 	}
 
@@ -94,11 +120,16 @@ public:
 		return length;
 	}
 
+	bool IsEmpty() const
+	{
+		return _text == nullptr;
+	}
+
 	// ეძებს მითითებულ სიმბოლოს ტექტსში.
 	// startIndex: საიდან დაიწყოს ძებნა.
 	// ignoreCase: მიაქციოს თუ არა ყურადღება რეგისტრს. თუ არის true არ ყურადღებას არ აქცევს.
 	// თუ ვერ იპოვბა აბრუნებს -1-ს
-	int IndexOf(char symbol, int startIndex = 0, bool ignoreCase = false)
+	int IndexOf(char symbol, int startIndex = 0, bool ignoreCase = false) const
 	{
 		// შევამოწმით ინდექსი საზღვრებს ხომ არ გაცდა
 		if (startIndex < 0 || startIndex >= _length)
@@ -115,7 +146,7 @@ public:
 	}
 
 	// ტექსტიდან იღებს ქვეტექსტს მითითებული ინედქსიდან მითითებული რაოდენობით
-	String Substring(int index, int count)
+	String Substring(int index, int count) const
 	{
 		if (index < 0 || index >= _length)
 			throw std::exception("startIndex is out of range");
@@ -143,13 +174,13 @@ public:
 	}
 
 	// symbol გადაყავს დიდ ასოში
-	char ToUpper(char symbol)
+	char ToUpper(char symbol) const
 	{
 		return  symbol >= 'a' && symbol <= 'z' ? symbol - ('a' - 'A') : symbol;
 	}
 
 	// აბრუნებს ახალ ტექსტს რომელიც არის დიდ ასოებში გადაყვანილი
-	String ToUpper()
+	String ToUpper() const
 	{
 		String newString(_length, _length + 1);
 
@@ -162,7 +193,7 @@ public:
 	}
 
 	// symbol გადაყავს პატარა ასოში
-	char ToLower(char symbol)
+	char ToLower(char symbol) const
 	{
 		return  symbol >= 'A' && symbol <= 'Z' ? symbol + ('a' - 'A') : symbol;
 	}
@@ -182,13 +213,16 @@ public:
 
 	// ერთ ტექსტს შეადარებს მეორეს.
 	// აბრუნებს -1-ს თუ პირველი ნაკლებია მეორეზე, 0-ს თუ ტოლი და 1-ს თუ მეტია
-	int Compare(const String other) // TODO: დაამატეთ რეგისტრის დაიგნორების ფუნქციონალი
+	int Compare(const String other, bool ignoreCase = false) const
 	{
 		int count = _length <= other._length ? _length : other._length;
 		for (int i = 0; i < count; i++)
 		{
-			if (_text[i] < other._text[i]) return -1;
-			if (_text[i] > other._text[i]) return 1;
+			char first = ignoreCase ? ToLower(_text[i]) : _text[i];
+			char second = ignoreCase ? ToLower(other._text[i]) : other._text[i];
+
+			if (first < second) return -1;
+			if (first > second) return 1;
 		}
 
 		if (_length < other._length) return -1;
@@ -197,11 +231,51 @@ public:
 		return 0;
 	}
 
-	// TODO: 6. ფუნქცია რომელიც ერთ ტექსტში იპოვის მეორეს
+	// პოულობს searchValue-ს არსებულ ტექსტში.
+	// თუ ვერ იპოვა აბრუნებს -1-ს;
+	// თუ პარამეტრად გადმოცემული ტექსტი მიმდინარეზე გრძელია აბრუნებს -1-ს
+	// თუ პარამეტრად გადმოცემული ტექსტი ცარიელია აბრუნებს -1-ს
+	int IndexOf(const String& searchValue) const
+	{
+		if (searchValue.IsEmpty() || _length < searchValue._length)
+			return -1;
+
+		int i, j;
+		for (i = 0, j = 0; i < _length && j < searchValue._length; i++)
+		{
+			if (_text[i] == searchValue._text[j])
+			{
+				j++;
+			}
+			else
+			{
+				j = 0;
+			}
+		}
+
+		return j < searchValue._length ? -1 : i - j;
+	}
 
 	// TODO: 7. ფუნქცია რომელიც დახლეჩს ტექტს მითითებული სიმბოლოს მიხედვით და დაგვიბრუნებს ტექსტების ლისტს
+	List<String> Split(char separator = ' ') const
+	{
+		List<String> results;
 
-	friend std::ostream& operator<< (std::ostream& os, String& str);
+		int start = 0, end = 0;
+
+		while (end < _length)
+		{
+			end = IndexOf(separator, start);
+			if (end == -1)
+				end = _length;
+			results.Add(Substring(start, end - start));
+			start = end + 1;
+		}
+
+		return results;
+	}
+
+	friend std::ostream& operator<< (std::ostream& os, const String& str);
 	friend String operator+(const String& other, const char* text);
 	friend String operator+(const String& other, String& str);
 
@@ -230,9 +304,10 @@ std::istream& operator>>(std::istream& is, String& str)
 	return is;
 }
 
-std::ostream& operator<<(std::ostream& os, String& str)
+std::ostream& operator<<(std::ostream& os, const String& str)
 {
-	os << str._text;
+	if (str._text != nullptr)
+		os << str._text;
 	return  os;
 }
 
