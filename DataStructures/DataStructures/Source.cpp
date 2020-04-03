@@ -72,5 +72,25 @@ int main()
 {
 	// ProcessStudents();
 
+	SinglyLinkedList numbersCopy;
+	if (true)
+	{
+		SinglyLinkedList numbers;
+
+		const int count = 10000000;
+		//const int count = 3;
+
+		for (int i = 0; i < count; i++)
+		{
+			numbers.AddLast(i * 10);
+		}
+
+		cout << "Count: " << numbers.Count() << endl;;
+
+		numbersCopy = numbers;
+	}
+	cout << numbersCopy.Count() << endl;
+	numbersCopy.Foreach([](double n) {cout << n << " "; });
+
 	return 0;
 }
