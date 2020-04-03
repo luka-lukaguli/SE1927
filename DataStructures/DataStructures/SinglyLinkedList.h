@@ -118,6 +118,7 @@ public:
 		while (begin != nullptr)
 		{
 			AddLast(begin->_value);
+			begin = begin->_next;
 		}
 	}
 

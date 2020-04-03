@@ -77,7 +77,7 @@ int main()
 	{
 		SinglyLinkedList numbers;
 
-		const int count = 10000000;
+		const int count = 1000000;
 		//const int count = 3;
 
 		for (int i = 0; i < count; i++)
