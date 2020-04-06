@@ -49,7 +49,7 @@ public:
 
 	void AddLast(T item)
 	{
-		Node<T>* newNode = new Node<T>(item);
+		auto newNode = new Node<T>(item);
 
 		if (_head == nullptr && _tail == nullptr)
 		{
@@ -65,7 +65,7 @@ public:
 
 	void AddFirst(T item)
 	{
-		Node<T>* newNode = new Node<T>(item);
+		auto newNode = new Node<T>(item);
 
 		if (_head == nullptr && _tail == nullptr)
 		{
@@ -82,7 +82,7 @@ public:
 	template <typename Action>
 	void Foreach(Action action)
 	{
-		Node<T>* iterator = _head;
+		auto iterator = _head;
 
 		while (iterator != nullptr)
 		{
@@ -91,7 +91,7 @@ public:
 		}
 	}
 
-	bool RemoveFirst()
+	bool RemoveFirst() noexcept
 	{
 		if (_head == nullptr)
 			return false;
@@ -101,11 +101,34 @@ public:
 			_tail = nullptr;
 		}
 
-		Node<T>* newHead = _head->_next;
+		auto  newHead = _head->_next;
 		delete[] _head;
 		_head = newHead;
 
 		_count--;
+		return true;
+	}
+
+	bool RemoveLast() noexcept
+	{
+		if (_head == nullptr)
+			return false;
+
+		if (_head == _tail)
+		{
+			_tail = nullptr;
+		}
+
+		auto  newtail = _head;
+		while (newtail->_next != _tail)
+		{
+			newtail = newtail->_next;
+		}
+
+		delete[] _tail;
+		_tail = newtail;
+		_count--;
+
 		return true;
 	}
 
@@ -118,9 +141,12 @@ public:
 
 	SinglyLinkedList<T>& operator=(const SinglyLinkedList<T>& other) noexcept
 	{
+		if (this == &other)
+			return *this;
+
 		Clear();
 
-		Node<T>* begin = other._head;
+		auto begin = other._head;
 
 		while (begin != nullptr)
 		{
@@ -132,6 +158,9 @@ public:
 
 	SinglyLinkedList<T>& operator=(SinglyLinkedList<T>&& other) noexcept
 	{
+		if (this == &other)
+			return *this;
+
 		Clear();
 
 		_head = other._head;
@@ -144,8 +173,6 @@ public:
 		return *this;
 	}
 
-	// 0. გადააკეთეთ Template-ად, რომ ნებისმიერი ტიპების შენახვა შევძლოთ, ეხლა მარტო T-ზე მუშაობს
-	// 1. დაამატეთ ბოლოდან წაშლის ლოგიკა
 	// 2. დაამატეთ ფუნქცია რომელიც ერთი ლისტ გარდაქმნის მეორე ლისტად და დააბრუნებს ახალს გარდაქმნილ ლისტს
 	// 3. დაწერეთ იმ პირველივე ნოუდის პოვნის ფუნქცია რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
 	// 4. დაწერეთ იმ ბოლო ნოუდის პოვნის ფუნქცია რომელიც აკმატოფილებს გადაცემულ კრიტერიუმს
