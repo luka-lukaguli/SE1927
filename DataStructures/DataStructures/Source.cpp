@@ -72,10 +72,10 @@ int main()
 {
 	// ProcessStudents();
 
-	SinglyLinkedList numbersCopy;
+	SinglyLinkedList<double> numbersCopy;
 	if (true)
 	{
-		SinglyLinkedList numbers;
+		SinglyLinkedList<double> numbers;
 
 		const int count = 1000;
 		//const int count = 3;

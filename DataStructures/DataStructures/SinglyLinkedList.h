@@ -1,21 +1,23 @@
 ﻿#pragma once
 
+template <class T>
 struct Node
 {
-	double _value;
-	Node* _next = nullptr;
+	T _value;
+	Node<T>* _next = nullptr;
 
-	Node(double value)
+	Node(T value)
 	{
 		_value = value;
 	}
 };
 
+template <class T>
 class SinglyLinkedList
 {
 private:
-	Node* _head = nullptr;
-	Node* _tail = nullptr;
+	Node<T>* _head = nullptr;
+	Node<T>* _tail = nullptr;
 	int _count = 0;
 
 public:
@@ -26,7 +28,7 @@ public:
 
 	SinglyLinkedList() = default;
 
-	SinglyLinkedList(const SinglyLinkedList& other)
+	SinglyLinkedList(const SinglyLinkedList<T>& other)
 	{
 		*this = other;
 	}
@@ -35,7 +37,7 @@ public:
 	// იქიდან გამომდინარე რომ rvalues დროის ძალიან მცირე პერიოდში ცოცხლობს და მაშინვე კვდება
 	// კარგი იქნება თუ მოვპარავთ რესურს რომელიც შექმნა რომ ეს რესურსი ტყუილად არ გაიფლანგოს
 
-	SinglyLinkedList(SinglyLinkedList&& other) noexcept
+	SinglyLinkedList(SinglyLinkedList<T>&& other) noexcept
 	{
 		_head = other._head;
 		_tail = other._tail;
@@ -45,9 +47,9 @@ public:
 		other._tail = nullptr;
 	}
 
-	void AddLast(double item)
+	void AddLast(T item)
 	{
-		Node* newNode = new Node(item);
+		Node<T>* newNode = new Node<T>(item);
 
 		if (_head == nullptr && _tail == nullptr)
 		{
@@ -61,9 +63,9 @@ public:
 		_count++;
 	}
 
-	void AddFirst(double item)
+	void AddFirst(T item)
 	{
-		Node* newNode = new Node(item);
+		Node<T>* newNode = new Node<T>(item);
 
 		if (_head == nullptr && _tail == nullptr)
 		{
@@ -80,7 +82,7 @@ public:
 	template <typename Action>
 	void Foreach(Action action)
 	{
-		Node* iterator = _head;
+		Node<T>* iterator = _head;
 
 		while (iterator != nullptr)
 		{
@@ -99,7 +101,7 @@ public:
 			_tail = nullptr;
 		}
 
-		Node* newHead = _head->_next;
+		Node<T>* newHead = _head->_next;
 		delete[] _head;
 		_head = newHead;
 
@@ -114,11 +116,11 @@ public:
 
 #pragma region Operators
 
-	SinglyLinkedList& operator=(const SinglyLinkedList& other) noexcept
+	SinglyLinkedList<T>& operator=(const SinglyLinkedList<T>& other) noexcept
 	{
 		Clear();
 
-		Node* begin = other._head;
+		Node<T>* begin = other._head;
 
 		while (begin != nullptr)
 		{
@@ -128,7 +130,7 @@ public:
 		return *this;
 	}
 
-	SinglyLinkedList& operator=(SinglyLinkedList&& other) noexcept
+	SinglyLinkedList<T>& operator=(SinglyLinkedList<T>&& other) noexcept
 	{
 		Clear();
 
@@ -142,7 +144,7 @@ public:
 		return *this;
 	}
 
-	// 0. გადააკეთეთ Template-ად, რომ ნებისმიერი ტიპების შენახვა შევძლოთ, ეხლა მარტო double-ზე მუშაობს
+	// 0. გადააკეთეთ Template-ად, რომ ნებისმიერი ტიპების შენახვა შევძლოთ, ეხლა მარტო T-ზე მუშაობს
 	// 1. დაამატეთ ბოლოდან წაშლის ლოგიკა
 	// 2. დაამატეთ ფუნქცია რომელიც ერთი ლისტ გარდაქმნის მეორე ლისტად და დააბრუნებს ახალს გარდაქმნილ ლისტს
 	// 3. დაწერეთ იმ პირველივე ნოუდის პოვნის ფუნქცია რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
