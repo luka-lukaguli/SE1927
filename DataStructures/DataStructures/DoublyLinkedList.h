@@ -75,6 +75,7 @@ public:
 		}
 		else
 		{
+			_head->_previous = newNode;
 			newNode->_next = _head;
 		}
 		_head = newNode;
