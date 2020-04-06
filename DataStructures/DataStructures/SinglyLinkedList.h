@@ -127,6 +127,7 @@ public:
 
 		delete[] _tail;
 		_tail = newtail;
+		_tail->_next = nullptr;
 		_count--;
 
 		return true;

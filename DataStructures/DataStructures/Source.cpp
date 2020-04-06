@@ -77,8 +77,8 @@ int main()
 	{
 		SinglyLinkedList<double> numbers;
 
-		const int count = 1000;
-		//const int count = 3;
+		//const int count = 1000;
+		const int count = 3;
 
 		for (int i = 0; i < count; i++)
 		{
@@ -86,6 +86,12 @@ int main()
 		}
 
 		cout << "Count: " << numbers.Count() << endl;;
+		numbers.Foreach([](double n) {cout << n << " "; });
+
+		numbers.RemoveLast();
+
+		cout << "Count: " << numbers.Count() << endl;;
+		numbers.Foreach([](double n) {cout << n << " "; });
 
 		numbersCopy = numbers;
 	}
