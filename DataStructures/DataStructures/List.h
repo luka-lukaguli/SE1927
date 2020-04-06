@@ -25,7 +25,7 @@ public:
 	}
 
 	// copy კონსტრუქტორი
-	List(const List& other)
+	List(const List& other) noexcept
 	{
 		_size = other._count;
 		_count = other._count;
@@ -37,6 +37,15 @@ public:
 		}
 	}
 
+	List(List&& other) noexcept
+	{
+		_size = other._count;
+		_count = other._count;
+		_collection = other._collection;
+
+		other._collection = nullptr;
+	}
+
 	// დესტრუქტორი
 	~List()
 	{
@@ -44,7 +53,7 @@ public:
 		delete[] _collection;
 	}
 
-	void operator=(const List& other)
+	List& operator=(const List& other) noexcept
 	{
 		delete[] _collection;
 
@@ -63,6 +72,21 @@ public:
 		{
 			_collection[i] = other._collection[i];
 		}
+
+		return *this;
+	}
+
+	List& operator=(List&& other) noexcept
+	{
+		delete[] _collection;
+
+		_size = other._count;
+		_count = other._count;
+		_collection = other._collection;
+
+		other._collection = nullptr;
+
+		return *this;
 	}
 
 	T& operator[](int index) const

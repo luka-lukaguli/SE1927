@@ -35,9 +35,14 @@ public:
 	// იქიდან გამომდინარე რომ rvalues დროის ძალიან მცირე პერიოდში ცოცხლობს და მაშინვე კვდება
 	// კარგი იქნება თუ მოვპარავთ რესურს რომელიც შექმნა რომ ეს რესურსი ტყუილად არ გაიფლანგოს
 
-	SinglyLinkedList(SinglyLinkedList&& other)
+	SinglyLinkedList(SinglyLinkedList&& other) noexcept
 	{
-		// დაწერეთ მოპარვის ლოგიკა და იგივე გააკეთეთ მინიჭების ოპერატორისთვის
+		_head = other._head;
+		_tail = other._tail;
+		_count = other._count;
+
+		other._head = nullptr;
+		other._tail = nullptr;
 	}
 
 	void AddLast(double item)
@@ -109,7 +114,7 @@ public:
 
 #pragma region Operators
 
-	void operator=(const SinglyLinkedList& other)
+	SinglyLinkedList& operator=(const SinglyLinkedList& other) noexcept
 	{
 		Clear();
 
@@ -120,16 +125,27 @@ public:
 			AddLast(begin->_value);
 			begin = begin->_next;
 		}
+		return *this;
 	}
 
-	void operator=(SinglyLinkedList&& other)
+	SinglyLinkedList& operator=(SinglyLinkedList&& other) noexcept
 	{
-		// დასამთავრებელია
+		Clear();
+
+		_head = other._head;
+		_tail = other._tail;
+		_count = other._count;
+
+		other._head = nullptr;
+		other._tail = nullptr;
+
+		return *this;
 	}
+
 	// 0. გადააკეთეთ Template-ად, რომ ნებისმიერი ტიპების შენახვა შევძლოთ, ეხლა მარტო double-ზე მუშაობს
 	// 1. დაამატეთ ბოლოდან წაშლის ლოგიკა
 	// 2. დაამატეთ ფუნქცია რომელიც ერთი ლისტ გარდაქმნის მეორე ლისტად და დააბრუნებს ახალს გარდაქმნილ ლისტს
-	// 3. დაწერეთ იმ პირველივე ნოუდის პოვნის ფუნქცია რომელიც აკმატოფილებს გადაცემულ კრიტერიუმს
+	// 3. დაწერეთ იმ პირველივე ნოუდის პოვნის ფუნქცია რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
 	// 4. დაწერეთ იმ ბოლო ნოუდის პოვნის ფუნქცია რომელიც აკმატოფილებს გადაცემულ კრიტერიუმს
 	// 5. დაწერეთ ფუქნცია რომელიც ყველა ისეთ ელემენტს დაბრუნებს რომლებიც აკმაყოფილებენ გადაცემულ კრიტერიუმს
 
