@@ -138,6 +138,65 @@ public:
 		while (RemoveFirst());
 	}
 
+	// ერთი ლისტ გარდაქმნის მეორე ლისტად და აბრუნებს ახალს გარდაქმნილ ლისტს
+	// transformFunction: ფუნქცია რომელიც ერთ ობიექტს გადაიყვანს მეორე იმავე ან სხვა ტიპის ობიექტში
+	template<class TResult, class TransformFunction>
+	SinglyLinkedList<TResult> Transform(TransformFunction transformFunction)
+	{
+		SinglyLinkedList<TResult> resultList;
+
+		for (auto iterator = _head; iterator != nullptr; iterator = iterator->_next)
+		{
+			auto result = transformFunction(iterator->_value);
+			resultList.AddLast(result);
+		}
+		return resultList;
+	}
+
+	// პოულობს პირველივე ნოუდს რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
+	template <typename Predicate>
+	Node<T>* FindFirst(Predicate predicate)
+	{
+		for (auto iterator = _head; iterator != nullptr; iterator = iterator->_next)
+		{
+			if (predicate(iterator->_value))
+			{
+				return iterator;
+			}
+		}
+		return nullptr;
+	}
+
+	// პოულობს ბოლო ნოუდს რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
+	template <typename Predicate>
+	Node<T>* FindLast(Predicate predicate)
+	{
+		Node<T>* result = nullptr;
+		for (auto iterator = _head; iterator != nullptr; iterator = iterator->_next)
+		{
+			if (predicate(iterator->_value))
+			{
+				result = iterator;
+			}
+		}
+		return result;
+	}
+
+	// პოულობს ყველა ნოუდს რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
+	template <typename Predicate>
+	SinglyLinkedList<T> FindAll(Predicate predicate)
+	{
+		SinglyLinkedList<T> result;
+		for (auto iterator = _head; iterator != nullptr; iterator = iterator->_next)
+		{
+			if (predicate(iterator->_value))
+			{
+				result.AddLast(iterator->_value);
+			}
+		}
+		return result;
+	}
+
 #pragma region Operators
 
 	SinglyLinkedList<T>& operator=(const SinglyLinkedList<T>& other) noexcept
@@ -173,11 +232,6 @@ public:
 
 		return *this;
 	}
-
-	// 2. დაამატეთ ფუნქცია რომელიც ერთი ლისტ გარდაქმნის მეორე ლისტად და დააბრუნებს ახალს გარდაქმნილ ლისტს
-	// 3. დაწერეთ იმ პირველივე ნოუდის პოვნის ფუნქცია რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
-	// 4. დაწერეთ იმ ბოლო ნოუდის პოვნის ფუნქცია რომელიც აკმატოფილებს გადაცემულ კრიტერიუმს
-	// 5. დაწერეთ ფუქნცია რომელიც ყველა ისეთ ელემენტს დაბრუნებს რომლებიც აკმაყოფილებენ გადაცემულ კრიტერიუმს
 
 #pragma endregion
 

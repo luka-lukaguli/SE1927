@@ -26,19 +26,15 @@ struct Student
 
 	Student() = default;
 
-	Student(const String& line)
-	{
-		Parse(line);
-	}
-
 	// "firstName,lastName,phoneNumber"
-	void Parse(const String& line)
+	static Student Parse(const String& line)
 	{
 		List<String> data = line.Split(',');
-
-		firstName = data[0];
-		lastName = data[1];
-		phoneNumber = data[2];
+		Student student;
+		student.firstName = data[0];
+		student.lastName = data[1];
+		student.phoneNumber = data[2];
+		return student;
 	}
 };
 
@@ -60,7 +56,7 @@ void ProcessStudents()
 	while (!fin.eof())
 	{
 		GetLine(fin, line, 200);
-		students.Add(Student(line));
+		students.Add(Student::Parse(line));
 	}
 	fin.close();
 
@@ -72,31 +68,48 @@ int main()
 {
 	// ProcessStudents();
 
-	SinglyLinkedList<double> numbersCopy;
-	if (true)
+	SinglyLinkedList<int> numbers;
+
+	//const int count = 1000;
+	const int count = 7;
+
+	for (int i = 0; i < count; i++)
 	{
-		SinglyLinkedList<double> numbers;
-
-		//const int count = 1000;
-		const int count = 3;
-
-		for (int i = 0; i < count; i++)
-		{
-			numbers.AddLast(i * 10);
-		}
-
-		cout << "Count: " << numbers.Count() << endl;;
-		numbers.Foreach([](double n) {cout << n << " "; });
-
-		numbers.RemoveLast();
-
-		cout << "Count: " << numbers.Count() << endl;;
-		numbers.Foreach([](double n) {cout << n << " "; });
-
-		numbersCopy = numbers;
+		numbers.AddLast(i * 15);
 	}
-	cout << numbersCopy.Count() << endl;
-	numbersCopy.Foreach([](double n) {cout << n << " "; });
+
+	numbers.Foreach([](int n) {cout << n << " "; });
+
+	auto node = numbers.FindLast([](int n) {return n > 45; });
+	if (node != nullptr)
+	{
+		cout << endl << node->_value;
+	}
+
+	auto odds = numbers.FindAll([](int n) {return n % 2 == 1; });
+	cout << endl;
+	odds.Foreach([](int n) {cout << n << " "; });
+
+	cout << "\n------------------------------\n";
+	auto bigNumbers = numbers.Transform<int>([](int n) {return n * 100; });
+
+	bigNumbers.Foreach([](int n) {cout << n << " "; });
+
+	String line;
+
+	SinglyLinkedList<Student> students;
+
+	//ifstream fin("data.csv");
+	//while (!fin.eof())
+	//{
+	//	GetLine(fin, line, 200);
+	//	students.AddLast(Student::Parse(line));
+	//}
+	//fin.close();
+
+	//students.Foreach([](const Student& s) {PrintStudent(s); });
+	cout << "\n------------------------------\n";
+	/*auto phoneNumbers = students.Transform<String>([](const Student& s) {return s.phoneNumber; });*/
 
 	return 0;
 }
