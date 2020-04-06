@@ -102,11 +102,15 @@ public:
 		if (_head == _tail)
 		{
 			_tail = nullptr;
+			delete _head;
+			_head = nullptr;
 		}
-
-		auto  newHead = _head->_next;
-		delete[] _head;
-		_head = newHead;
+		else
+		{
+			_head = _head->_next;
+			delete[] _head->_previous;
+			_head->_previous = nullptr;
+		}
 
 		_count--;
 		return true;
@@ -120,19 +124,17 @@ public:
 		if (_head == _tail)
 		{
 			_tail = nullptr;
+			delete _head;
+			_head = nullptr;
 		}
-
-		auto  newtail = _head;
-		while (newtail->_next != _tail)
+		else
 		{
-			newtail = newtail->_next;
+			_tail = _tail->_previous;
+			delete[] _tail->_next;
+			_tail->_next = nullptr;
 		}
 
-		delete[] _tail;
-		_tail = newtail;
-		_tail->_next = nullptr;
 		_count--;
-
 		return true;
 	}
 
