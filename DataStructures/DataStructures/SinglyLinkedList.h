@@ -1,23 +1,23 @@
 ﻿#pragma once
 
 template <class T>
-struct Node
-{
-	T _value;
-	Node<T>* _next = nullptr;
-
-	Node(T value)
-	{
-		_value = value;
-	}
-};
-
-template <class T>
 class SinglyLinkedList
 {
+public:
+	struct Node
+	{
+		T _value;
+		Node* _next = nullptr;
+
+		Node(T value)
+		{
+			_value = value;
+		}
+	};
+
 private:
-	Node<T>* _head = nullptr;
-	Node<T>* _tail = nullptr;
+	Node* _head = nullptr;
+	Node* _tail = nullptr;
 	int _count = 0;
 
 public:
@@ -49,7 +49,7 @@ public:
 
 	void AddLast(T item)
 	{
-		auto newNode = new Node<T>(item);
+		auto newNode = new Node(item);
 
 		if (_head == nullptr && _tail == nullptr)
 		{
@@ -65,7 +65,7 @@ public:
 
 	void AddFirst(T item)
 	{
-		auto newNode = new Node<T>(item);
+		auto newNode = new Node(item);
 
 		if (_head == nullptr && _tail == nullptr)
 		{
@@ -155,7 +155,7 @@ public:
 
 	// პოულობს პირველივე ნოუდს რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
 	template <typename Predicate>
-	Node<T>* FindFirst(Predicate predicate)
+	Node* FindFirst(Predicate predicate)
 	{
 		for (auto iterator = _head; iterator != nullptr; iterator = iterator->_next)
 		{
@@ -169,9 +169,9 @@ public:
 
 	// პოულობს ბოლო ნოუდს რომელიც აკმაყოფილებს გადაცემულ კრიტერიუმს
 	template <typename Predicate>
-	Node<T>* FindLast(Predicate predicate)
+	Node* FindLast(Predicate predicate)
 	{
-		Node<T>* result = nullptr;
+		Node* result = nullptr;
 		for (auto iterator = _head; iterator != nullptr; iterator = iterator->_next)
 		{
 			if (predicate(iterator->_value))
