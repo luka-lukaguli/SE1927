@@ -11,9 +11,9 @@ private:
 	int _length = 0; // მასივში მიმდინარე ელემენტების რაოდენობას აღნიშნავს
 
 public:
-	String()
-	{
-	};
+#pragma region Constructors
+
+	String() = default;
 
 	String(const String& other)
 	{
@@ -28,7 +28,7 @@ public:
 		}
 	}
 
-	String(String&& other)
+	String(String&& other) noexcept
 	{
 		_text = other._text;
 		_length = other._length;
@@ -39,6 +39,9 @@ public:
 
 	String(const char* text)
 	{
+		if (text == nullptr)
+			throw std::exception("text can not be nullptr");
+
 		_length = StringLength(text);
 		_capacity = _length + 1;
 
@@ -55,62 +58,16 @@ public:
 		InitializeInternal(length, capacity);
 	}
 
-	String operator=(const char* text)
-	{
-		if (text == nullptr)
-			throw std::exception("text can not be nullptr");
-
-		int length = StringLength(text);
-		InitializeInternal(length, length + 1);
-
-		for (int i = 0; i < _capacity; i++)
-		{
-			_text[i] = text[i];
-		}
-		return *this;
-	}
-
-	String operator=(const String& other)
-	{
-		if (other._text == nullptr)
-		{
-			delete[] _text;
-			_capacity = 0;
-			_length = 0;
-			_text = nullptr;
-			return *this;
-		}
-
-		InitializeInternal(other._length, other._length + 1);
-
-		for (int i = 0; i < _capacity; i++)
-		{
-			_text[i] = other._text[i];
-		}
-		return *this;
-	}
-
-	String operator=(String&& other)
+	~String()
 	{
 		delete[] _text;
-
-		_text = other._text;
-		_length = other._length;
-		_capacity = other._capacity;
-
-		other._text = nullptr;
-
-		return *this;
 	}
 
-	char& operator[](int index) const
-	{
-		if (index < 0 || index >= _length)
-			throw std::exception("index is out of range");
-		return _text[index];
-	}
+#pragma endregion
 
-	int StringLength(const char* text) const
+#pragma region Methods
+
+	static int StringLength(const char* text)
 	{
 		int length = 0;
 		while (text[length] != '\0')
@@ -256,7 +213,7 @@ public:
 		return j < searchValue._length ? -1 : i - j;
 	}
 
-	// TODO: 7. ფუნქცია რომელიც დახლეჩს ტექტს მითითებული სიმბოლოს მიხედვით და დაგვიბრუნებს ტექსტების ლისტს
+	// ხლეჩს ტექტს მითითებული სიმბოლოს მიხედვით და გვიბრუნებს ტექსტების ლისტს
 	List<String> Split(char separator = ' ') const
 	{
 		List<String> results;
@@ -275,15 +232,101 @@ public:
 		return results;
 	}
 
+#pragma endregion
+
+#pragma region Operators
+
+	String& operator=(const char* text)
+	{
+		if (text == nullptr)
+			throw std::exception("text can not be nullptr");
+
+		int length = StringLength(text);
+		InitializeInternal(length, length + 1);
+
+		for (int i = 0; i < _capacity; i++)
+		{
+			_text[i] = text[i];
+		}
+		return *this;
+	}
+
+	String& operator=(const String& other) noexcept
+	{
+		if (this == &other)
+			return *this;
+
+		if (other._text == nullptr)
+		{
+			delete[] _text;
+			_capacity = 0;
+			_length = 0;
+			_text = nullptr;
+			return *this;
+		}
+
+		InitializeInternal(other._length, other._length + 1);
+
+		for (int i = 0; i < _capacity; i++)
+		{
+			_text[i] = other._text[i];
+		}
+		return *this;
+	}
+
+	String& operator=(String&& other) noexcept
+	{
+		if (this == &other)
+			return *this;
+
+		delete[] _text;
+
+		_text = other._text;
+		_length = other._length;
+		_capacity = other._capacity;
+
+		other._text = nullptr;
+
+		return *this;
+	}
+
+	bool operator>(const String& other) const noexcept
+	{
+		return this->Compare(other) > 0;
+	}
+
+	bool operator>=(const String& other) const noexcept
+	{
+		return this->Compare(other) >= 0;
+	}
+
+	bool operator<(const String& other) const noexcept
+	{
+		return this->Compare(other) < 0;
+	}
+
+	bool operator<=(const String& other) const noexcept
+	{
+		return this->Compare(other) <= 0;
+	}
+
+	bool operator==(const String& other) const noexcept
+	{
+		return this->Compare(other) == 0;
+	}
+
+	char& operator[](int index) const
+	{
+		if (index < 0 || index >= _length)
+			throw std::exception("index is out of range");
+		return _text[index];
+	}
+
 	friend std::ostream& operator<< (std::ostream& os, const String& str);
 	friend String operator+(const String& other, const char* text);
 	friend String operator+(const String& other, String& str);
 
-	~String()
-	{
-		// გამოყენებას რომ დავამთავრებ უეჭველი უნდა წავშალო თორემ memory leak იქნება
-		delete[] _text;
-	}
+#pragma endregion
 
 private:
 	void InitializeInternal(int length, int capacity)
@@ -317,6 +360,15 @@ void GetLine(std::istream& is, String& str, int bufferSize = 1000000)
 	is.getline(buffer, bufferSize);
 	str = buffer;
 	delete[] buffer;
+}
+
+String GetLine(std::istream& is, int bufferSize = 1000000)
+{
+	char* buffer = new char[bufferSize];
+	is.getline(buffer, bufferSize);
+	String str = buffer;
+	delete[] buffer;
+	return str;
 }
 
 String operator+(const String& first, String& second)
