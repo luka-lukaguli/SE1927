@@ -1,82 +1,207 @@
 ﻿#include <iostream>
-#include <exception> // ჩავრთოთ გამონაკლისების ბიბლიოთეკა იმისთვის რომ გამონაკლისი ვისროლოთ
-#include <fstream>
-#include "List.h"
-#include "Array.h"
-#include "Queue.h"
-#include "String.h"
+#include <Windows.h>
+#include <conio.h>
+
 #include "SinglyLinkedList.h"
-#include "Stack.h"
 
-using namespace std;
+using namespace  std;
 
-template <typename T>
-void PrintArray(const List<T>& array)
+struct Point
 {
-	for (int i = 0; i < array.Count(); i++)
+	short x = 0;
+	short y = 0;
+
+	Point(short x, short y)
 	{
-		cout << array[i] << " ";
+		this->x = x;
+		this->y = y;
 	}
-	cout << endl;
-}
 
-struct Customer
+	Point() = default;
+};
+
+struct Margin
 {
-	String firstName;
-	String lastName;
-	String phoneNumber;
+	short top = 0, bottom = 0, left = 0, right = 0;
 
-	Customer() = default;
+	Margin() = default;
 
-	Customer(const String& line)
+	Margin(short top, short bottom, short left, short right)
 	{
-		List<String> data = line.Split(',');
-		firstName = data[0];
-		lastName = data[1];
-		phoneNumber = data[2];
+		this->top = top;
+		this->bottom = bottom;
+		this->left = left;
+		this->right = right;
 	}
 };
 
-void PrintCustomer(const Customer& student)
+struct Snake
 {
-	cout << student.firstName << " ";
-	cout << student.lastName << " ";
-	cout << student.phoneNumber;
-	cout << "\n------------------------------\n";
-}
+private:
+	SinglyLinkedList<Point> body;
+	Margin margin;
 
-char ReadKey(const char* message = "")
+public:
+	const char headShape = 'V';
+	const char bodyShape = 'O';
+
+	Snake(const Margin& margin)
+	{
+		this->margin = margin;
+
+		body.AddLast(Point(10, 10));
+	}
+
+	void MoveLeft()
+	{
+		auto& head = body.First();
+		if (head.x == margin.left)
+			head.x = margin.right;
+
+		head.x--;
+	}
+
+	void MoveRight()
+	{
+		auto& head = body.First();
+		if (head.x == margin.right)
+			head.x = margin.left;
+
+		head.x++;
+	}
+
+	void MoveUp()
+	{
+		auto& head = body.First();
+		if (head.y == margin.top)
+			head.y = margin.bottom;
+
+		head.y--;
+	}
+
+	void MoveDown()
+	{
+		auto& head = body.First();
+		if (head.y == margin.bottom)
+			head.y = margin.top;
+
+		head.y++;
+	}
+
+	Point Head()
+	{
+		return body.First();
+	}
+};
+
+struct Environment
 {
-	cout << message;
-	char key;
-	cin >> key;
-	return key;
-}
+	const char border = '#';
+
+	Margin margin;
+
+	Environment(short left, short top, short right, short bottom)
+	{
+		margin.left = left;
+		margin.top = top;
+		margin.right = right;
+		margin.bottom = bottom;
+	}
+
+	static void SetCursor(const Point& point)
+	{
+		COORD p = { point.x, point.y };
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), p);
+	}
+
+	static void SetCursor(short x, short y)
+	{
+		COORD p = { x, y };
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), p);
+	}
+
+	static void Clear()
+	{
+		system("cls");
+	}
+
+	void DrawBorder()
+	{
+		DrawTopBorder();
+		DrawLeftBorder();
+		DrawBottomBorder();
+		DrawRightBorder();
+	}
+
+private:
+	void DrawTopBorder()
+	{
+		for (short x = margin.left; x < margin.right; x++)
+		{
+			SetCursor(x, margin.top);
+			cout << border;
+		}
+	}
+
+	void DrawLeftBorder()
+	{
+		for (short y = margin.top; y < margin.bottom; y++)
+		{
+			SetCursor(margin.left, y);
+			cout << border << "\n";
+		}
+	}
+
+	void DrawBottomBorder()
+	{
+		for (short x = margin.left; x < margin.right; x++)
+		{
+			SetCursor(x, margin.bottom);
+			cout << border;
+		}
+	}
+
+	void DrawRightBorder()
+	{
+		for (short y = margin.top; y < margin.bottom; y++)
+		{
+			SetCursor(margin.right, y);
+			cout << border << "\n";
+		}
+	}
+};
 
 int main()
 {
-	unsigned short lastNumber = 1;
+	char controller;
 
-	Queue<unsigned short> customers;
+	Environment environment(5, 5, 45, 25);
+	Snake snake(environment.margin);
 
 	while (true)
 	{
-		auto choice = ReadKey(" Click [E] wait operator\n Click [D] call customer\n --> ");
+		environment.Clear();
+		environment.DrawBorder();
+		environment.SetCursor(snake.Head());
+		cout << snake.headShape;
+		controller = _getch();
 
-		switch (choice)
+		switch (controller)
 		{
-		case 'e':
-		case 'E':
-			customers.Enqueue(lastNumber++);
+		case 'w':
+			snake.MoveUp();
+			break;
+
+		case 's':
+			snake.MoveDown();
 			break;
 
 		case 'd':
-		case 'D':
-			cout << "Number : " << customers.Dequeue() << endl;
+			snake.MoveRight();
 			break;
 
-		default:
-			cout << "Invalid input " << endl;
+		case 'a':
+			snake.MoveLeft();
 			break;
 		}
 	}

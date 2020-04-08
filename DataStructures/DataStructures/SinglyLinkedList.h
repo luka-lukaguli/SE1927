@@ -48,14 +48,14 @@ public:
 		other._tail = nullptr;
 	}
 
-	T First()
+	T& First()
 	{
 		if (_head == nullptr)
 			throw std::exception("List is empty");
 		return _head->_value;
 	}
 
-	T Last()
+	T& Last()
 	{
 		if (_tail == nullptr)
 			throw std::exception("List is empty");
