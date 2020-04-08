@@ -144,7 +144,9 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="DoublyLinkedList.h" />
     <ClInclude Include="List.h" />
+    <ClInclude Include="Queue.h" />
     <ClInclude Include="SinglyLinkedList.h" />
+    <ClInclude Include="Stack.h" />
     <ClInclude Include="String.h" />
   </ItemGroup>
   <ItemGroup>

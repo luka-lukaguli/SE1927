@@ -82,6 +82,30 @@ public:
 		_count++;
 	}
 
+	T First()
+	{
+		if (_head == nullptr)
+			throw std::exception("List is empty");
+		return _head->_value;
+	}
+
+	T Last()
+	{
+		if (_tail == nullptr)
+			throw std::exception("List is empty");
+		return _tail->_value;
+	}
+
+	Node* GetHead()
+	{
+		return _head;
+	}
+
+	Node* GetTail()
+	{
+		return _tail;
+	}
+
 	template <typename Action>
 	void Foreach(Action action)
 	{

@@ -292,27 +292,27 @@ public:
 
 	bool operator>(const String& other) const noexcept
 	{
-		return this->Compare(other) > 0;
+		return Compare(other) > 0;
 	}
 
 	bool operator>=(const String& other) const noexcept
 	{
-		return this->Compare(other) >= 0;
+		return Compare(other) >= 0;
 	}
 
 	bool operator<(const String& other) const noexcept
 	{
-		return this->Compare(other) < 0;
+		return Compare(other) < 0;
 	}
 
 	bool operator<=(const String& other) const noexcept
 	{
-		return this->Compare(other) <= 0;
+		return Compare(other) <= 0;
 	}
 
 	bool operator==(const String& other) const noexcept
 	{
-		return this->Compare(other) == 0;
+		return Compare(other) == 0;
 	}
 
 	char& operator[](int index) const

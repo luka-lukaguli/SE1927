@@ -3,8 +3,10 @@
 #include <fstream>
 #include "List.h"
 #include "Array.h"
+#include "Queue.h"
 #include "String.h"
 #include "SinglyLinkedList.h"
+#include "Stack.h"
 
 using namespace std;
 
@@ -18,35 +20,24 @@ void PrintArray(const List<T>& array)
 	cout << endl;
 }
 
-struct Student
+struct Customer
 {
 	String firstName;
 	String lastName;
 	String phoneNumber;
 
-	Student() = default;
+	Customer() = default;
 
-	Student(const String& line)
+	Customer(const String& line)
 	{
 		List<String> data = line.Split(',');
 		firstName = data[0];
 		lastName = data[1];
 		phoneNumber = data[2];
 	}
-
-	// "firstName,lastName,phoneNumber"
-	static Student Parse(const String& line)
-	{
-		List<String> data = line.Split(',');
-		Student student;
-		student.firstName = data[0];
-		student.lastName = data[1];
-		student.phoneNumber = data[2];
-		return student;
-	}
 };
 
-void PrintStudent(const Student& student)
+void PrintCustomer(const Customer& student)
 {
 	cout << student.firstName << " ";
 	cout << student.lastName << " ";
@@ -54,69 +45,41 @@ void PrintStudent(const Student& student)
 	cout << "\n------------------------------\n";
 }
 
-void ProcessStudents()
+char ReadKey(const char* message = "")
 {
-	String line;
-
-	List<Student> students;
-
-	ifstream fin("data.csv");
-	while (!fin.eof())
-	{
-		GetLine(fin, line, 200);
-		students.Add(Student(line));
-	}
-	fin.close();
-
-	students.Sort([](const Student& s1, const Student& s2) {return s1.firstName < s2.firstName; });
-	students.Foreach([](const Student& s) {PrintStudent(s); });
-	students.For([](int, const Student& s) {PrintStudent(s); });
+	cout << message;
+	char key;
+	cin >> key;
+	return key;
 }
 
 int main()
 {
-	ProcessStudents();
+	unsigned short lastNumber = 1;
 
-	SinglyLinkedList<int> numbers;
+	Queue<unsigned short> customers;
 
-	//const int count = 1000;
-	const int count = 7;
-
-	for (int i = 0; i < count; i++)
+	while (true)
 	{
-		numbers.AddLast(i * 15);
+		auto choice = ReadKey(" Click [E] wait operator\n Click [D] call customer\n --> ");
+
+		switch (choice)
+		{
+		case 'e':
+		case 'E':
+			customers.Enqueue(lastNumber++);
+			break;
+
+		case 'd':
+		case 'D':
+			cout << "Number : " << customers.Dequeue() << endl;
+			break;
+
+		default:
+			cout << "Invalid input " << endl;
+			break;
+		}
 	}
-
-	numbers.Foreach([](int n) {cout << n << " "; });
-
-	auto node = numbers.FindLast([](int n) {return n > 45; });
-	if (node != nullptr)
-	{
-		cout << endl << node->_value;
-	}
-
-	auto odds = numbers.FindAll([](const int n) {return n % 2 == 1; });
-	cout << endl;
-	odds.Foreach([](int n) {cout << n << " "; });
-
-	cout << "\n------------------------------\n";
-	auto bigNumbers = numbers.Transform<int>([](const int n) {return n * 100; });
-
-	bigNumbers.Foreach([](int n) {cout << n << " "; });
-
-	SinglyLinkedList<Student> students;
-
-	ifstream fin("data.csv");
-	while (!fin.eof())
-	{
-		students.AddLast(Student(GetLine(fin, 200)));
-	}
-	fin.close();
-
-	students.Foreach(PrintStudent);
-
-	auto phoneNumbers = students.Transform<String>([](const Student& s) {return s.phoneNumber; });
-	phoneNumbers.Foreach([](const String& s) {cout << s << endl; });
 
 	return 0;
 }

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <exception>
 
 template <class T>
 class SinglyLinkedList
@@ -45,6 +46,30 @@ public:
 
 		other._head = nullptr;
 		other._tail = nullptr;
+	}
+
+	T First()
+	{
+		if (_head == nullptr)
+			throw std::exception("List is empty");
+		return _head->_value;
+	}
+
+	T Last()
+	{
+		if (_tail == nullptr)
+			throw std::exception("List is empty");
+		return _tail->_value;
+	}
+
+	Node* GetHead()
+	{
+		return _head;
+	}
+
+	Node* GetTail()
+	{
+		return _tail;
 	}
 
 	void AddLast(T item)
