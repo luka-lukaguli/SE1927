@@ -25,7 +25,7 @@ public:
 	}
 
 	// copy კონსტრუქტორი
-	List(const List& other) noexcept
+	List(const List<T>& other) noexcept
 	{
 		_size = other._count;
 		_count = other._count;
@@ -37,7 +37,7 @@ public:
 		}
 	}
 
-	List(List&& other) noexcept
+	List(List<T>&& other) noexcept
 	{
 		_size = other._count;
 		_count = other._count;
@@ -53,8 +53,11 @@ public:
 		delete[] _collection;
 	}
 
-	List& operator=(const List& other) noexcept
+	List<T>& operator=(const List<T>& other) noexcept
 	{
+		if (this == &other)
+			return *this;
+
 		delete[] _collection;
 
 		_size = other._count;
@@ -76,7 +79,7 @@ public:
 		return *this;
 	}
 
-	List& operator=(List&& other) noexcept
+	List<T>& operator=(List<T>&& other) noexcept
 	{
 		delete[] _collection;
 
@@ -137,17 +140,17 @@ public:
 		}
 	}
 
-	void CopyFrom(const List& source)
+	void CopyFrom(const List<T>& source)
 	{
 		CopyFrom(source._collection, source._size);
 	}
 
-	void CopyFrom(const List& source, int sourceIndex, int count)
+	void CopyFrom(const List<T>& source, int sourceIndex, int count)
 	{
 		CopyFrom(source._collection, sourceIndex, count);
 	}
 
-	void CopyFrom(const List& source, int sourceIndex, int destinationIndex, int count)
+	void CopyFrom(const List<T>& source, int sourceIndex, int destinationIndex, int count)
 	{
 		CopyFrom(source._collection, sourceIndex, destinationIndex, count);
 	}
@@ -227,12 +230,21 @@ public:
 
 	// დაწერეთ ფუნქცია სახელად Foreach რომელიც პარამეტრად გადაცემულ ფუნქციას შესრულებს თითოეული
 	// ელემენტისთვის
+	template < typename Action>
+	void For(Action executeAction)
+	{
+		for (int i = 0; i < _count; i++)
+		{
+			executeAction(i, _collection[i]);
+		}
+	}
+
 	template <typename Action>
 	void Foreach(Action executeAction)
 	{
 		for (int i = 0; i < _count; i++)
 		{
-			executeAction(i, _collection[i]);
+			executeAction(_collection[i]);
 		}
 	}
 
