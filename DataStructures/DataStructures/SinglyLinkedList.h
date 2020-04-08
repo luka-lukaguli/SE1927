@@ -102,7 +102,7 @@ public:
 		}
 
 		auto  newHead = _head->_next;
-		delete[] _head;
+		delete _head;
 		_head = newHead;
 
 		_count--;
@@ -125,7 +125,7 @@ public:
 			newtail = newtail->_next;
 		}
 
-		delete[] _tail;
+		delete _tail;
 		_tail = newtail;
 		_tail->_next = nullptr;
 		_count--;

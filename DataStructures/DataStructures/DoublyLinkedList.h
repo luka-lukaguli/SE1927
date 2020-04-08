@@ -108,7 +108,7 @@ public:
 		else
 		{
 			_head = _head->_next;
-			delete[] _head->_previous;
+			delete _head->_previous;
 			_head->_previous = nullptr;
 		}
 
@@ -130,7 +130,7 @@ public:
 		else
 		{
 			_tail = _tail->_previous;
-			delete[] _tail->_next;
+			delete _tail->_next;
 			_tail->_next = nullptr;
 		}
 
