@@ -142,8 +142,13 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DoublyLinkedList.h" />
+    <ClInclude Include="Environment.h" />
+    <ClInclude Include="Food.h" />
     <ClInclude Include="List.h" />
+    <ClInclude Include="Dimentions.h" />
     <ClInclude Include="SinglyLinkedList.h" />
+    <ClInclude Include="Snake.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
