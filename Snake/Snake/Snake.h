@@ -4,7 +4,8 @@
 
 enum Direction
 {
-	Left = 1,
+	None,
+	Left,
 	Up,
 	Right,
 	Down
@@ -17,7 +18,7 @@ private:
 
 public:
 	DoublyLinkedList<Point> body;
-	int direction;
+	Direction direction = None;
 
 	const char shape = 'O';
 
@@ -27,6 +28,7 @@ public:
 
 		body.AddLast(Point(10, 10));
 		body.AddLast(Point(9, 10));
+		body.AddLast(Point(8, 10));
 	}
 
 	void MoveLeft()
@@ -95,6 +97,9 @@ public:
 		case Down:
 			MoveDown();
 			break;
+
+		case None:
+		default:return;
 		}
 
 		FollowHead();

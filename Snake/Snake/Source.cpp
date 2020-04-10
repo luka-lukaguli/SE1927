@@ -6,9 +6,40 @@
 
 using namespace  std;
 
+enum GameState
+{
+	// დაასრულეთ
+};
+
+struct Game
+{
+	int gameSpeed = 100;
+	int score = 0;
+
+	// დაამატეთ ლიდერების სია და ფაილში შენახვის ფუნქციონალი
+
+	void Play()
+	{
+		// დაასრულეთ
+	}
+
+	void StopGame()
+	{
+		// დაასრულეთ
+	}
+
+	void Pause()
+	{
+		// დაასრულეთ
+	}
+
+	// ქულების ზრდასთან ერთად გაზარდეთ თამაშის სისწრაფე
+};
+
 int main()
 {
 	int gameSpeed = 100;
+
 	Environment environment(5, 5, 45, 25);
 
 	Snake snake(environment.margin);
