@@ -6,6 +6,19 @@
 
 using namespace  std;
 
+short Random(short min, short max)
+{
+	return rand() % (max - min) + min;
+}
+
+enum Direction
+{
+	Left = 1,
+	Up,
+	Right,
+	Down
+};
+
 struct Point
 {
 	short x = 0;
@@ -18,6 +31,16 @@ struct Point
 	}
 
 	Point() = default;
+
+	bool operator==(const Point& other)
+	{
+		return x == other.x && y == other.y;
+	}
+
+	bool operator==(Point&& other)
+	{
+		return x == other.x && y == other.y;
+	}
 };
 
 struct Margin
@@ -38,12 +61,13 @@ struct Margin
 struct Snake
 {
 private:
-	SinglyLinkedList<Point> body;
 	Margin margin;
 
 public:
-	const char headShape = 'V';
-	const char bodyShape = 'O';
+	SinglyLinkedList<Point> body;
+	int direction;
+
+	const char shape = 'O';
 
 	Snake(const Margin& margin)
 	{
@@ -92,6 +116,59 @@ public:
 	{
 		return body.First();
 	}
+
+	void Follow(const Point& point)
+	{
+	}
+
+	void Move()
+	{
+		auto headPosition = body.First();
+		switch (direction)
+		{
+		case Left:
+			MoveLeft();
+			break;
+		case Up:
+			MoveUp();
+			break;
+		case Right:
+			MoveRight();
+			break;
+		case Down:
+			MoveDown();
+			break;
+		}
+
+		Follow(headPosition);
+	}
+
+	void Eat()
+	{
+		auto tail = body.Last();
+		Move();
+		body.AddLast(tail);
+	}
+};
+
+struct Food
+{
+	Point position;
+	Margin margin;
+
+	const char shape = '@';
+
+	Food(const Margin& margin)
+	{
+		this->margin = margin;
+		SetNewPosition();
+	}
+
+	void SetNewPosition()
+	{
+		position.x = Random(margin.left + 1, margin.right - 1);
+		position.y = Random(margin.top + 1, margin.bottom - 1);
+	}
 };
 
 struct Environment
@@ -120,7 +197,7 @@ struct Environment
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), p);
 	}
 
-	static void Clear()
+	void Clear()
 	{
 		system("cls");
 	}
@@ -131,6 +208,27 @@ struct Environment
 		DrawLeftBorder();
 		DrawBottomBorder();
 		DrawRightBorder();
+	}
+
+	void Draw(Snake& snake)
+	{
+		snake.body.Foreach([&snake](const Point& bodyPart)
+			{
+				SetCursor(bodyPart);
+				cout << snake.shape;
+			});
+	}
+
+	void Draw(Food& food)
+	{
+		SetCursor(food.position);
+		cout << food.shape;
+	}
+
+	void GetControl(char& control)
+	{
+		while (_kbhit())
+			control = _getch();
 	}
 
 private:
@@ -173,37 +271,49 @@ private:
 
 int main()
 {
-	char controller;
-
+	int gameSpeed = 100;
 	Environment environment(5, 5, 45, 25);
-	Snake snake(environment.margin);
 
+	Snake snake(environment.margin);
+	Food food(environment.margin);
+
+	char controller = 'p';
 	while (true)
 	{
 		environment.Clear();
 		environment.DrawBorder();
-		environment.SetCursor(snake.Head());
-		cout << snake.headShape;
-		controller = _getch();
+		environment.Draw(snake);
+		environment.Draw(food);
+		environment.GetControl(controller);
+
+		if (food.position == snake.Head())
+		{
+			snake.Eat();
+			food.SetNewPosition();
+		}
 
 		switch (controller)
 		{
 		case 'w':
-			snake.MoveUp();
+			snake.direction = Up;
 			break;
 
 		case 's':
-			snake.MoveDown();
+			snake.direction = Down;
 			break;
 
 		case 'd':
-			snake.MoveRight();
+			snake.direction = Right;
 			break;
 
 		case 'a':
-			snake.MoveLeft();
+			snake.direction = Left;
 			break;
 		}
+
+		snake.Move();
+
+		Sleep(gameSpeed);
 	}
 
 	return 0;
