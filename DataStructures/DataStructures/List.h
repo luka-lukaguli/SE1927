@@ -66,7 +66,7 @@ public:
 		if (other._collection == nullptr)
 		{
 			_collection = nullptr;
-			return;
+			return *this;
 		}
 
 		_collection = new T[_size];
