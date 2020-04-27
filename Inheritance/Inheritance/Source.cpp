@@ -11,7 +11,7 @@ using namespace  std;
 class Animal
 {
 protected:
-	int _age;
+	int _age = 0;
 
 public:
 	int _weight;
@@ -21,13 +21,16 @@ public:
 		return _age;
 	}
 
-	void SetAge(int age)
+	virtual void SetAge(int age)
 	{
 		if (age >= 0 && age <= 20)
 		{
 			_age = age;
 		}
 	}
+
+	// წმინდა ვირტუალური ფუნქცია --- იგივე აბსტრაქტული ფუნქცია
+	virtual void MakeVoice() = 0;
 
 	void Walk()
 	{
@@ -45,8 +48,12 @@ public:
 	}
 };
 
+// კითხვა: არის Cat (კატა) კლასი Animal (ცხოველი) ???
+// პასუხი: კი
+// თუ ამ კითხვაზე პასუხი არის "კი", მაშინ შეგვიძლია გამოვიყენოთ მემკვიდრეობა
+//
 // მემკვიდრეობა -- "არის" მიმართება
-class Cat : public Animal  // Cat არის Animal
+class Cat : public Animal  // Cat არის Animal --- ':' -ეს სიმბოლო ამ შემთხვევაში ნიშნავს სიტყვარ 'არის'
 {
 public:
 	void Mew()
@@ -63,6 +70,11 @@ public:
 	void Info()
 	{
 		cout << "Hello I am cat. My age is " << _age << endl;
+	}
+
+	void MakeVoice()
+	{
+		Mew();
 	}
 };
 
@@ -84,6 +96,11 @@ public:
 	{
 		cout << "Hello I am dog. My age is " << _age << endl;
 	}
+
+	void MakeVoice()
+	{
+		Bark();
+	}
 };
 
 class Address
@@ -93,6 +110,26 @@ public:
 	string city;
 	string postalCode;
 	string street;
+};
+
+//    მემკვიდრე (შვილი - child) : მშობელი (parent)
+//    წარმოებული (derived) : საბაზისო(base)
+class Mouse : public Animal
+{
+public:
+
+	void SetAge(int age)
+	{
+		if (age >= 0 && age <= 3)
+		{
+			_age = age;
+		}
+	}
+
+	void MakeVoice()
+	{
+		cout << "wrip... wrip..." << endl;
+	}
 };
 
 // კომპოზიცია -- "აქვს" მიმართება
@@ -118,7 +155,135 @@ void AnimalActions(Animal* animal)
 	animal->Walk();
 }
 
-vector<string> Split(const string& line, const string& separator = " ")
+vector<string> Split(const string& line, const string& separator = " ");
+
+class Logger
+{
+public:
+	virtual void Log(const char* text) = 0;
+};
+
+void ConsoleLog(const char* text)
+{
+	cout << text;
+}
+
+class ConsoleLogger : public  Logger
+{
+public:
+	void Log(const char* text)
+	{
+		cout << text;
+	}
+};
+
+class FileLogger : public Logger
+{
+private:
+	ofstream fout;
+
+public:
+
+	FileLogger(const char* filename)
+	{
+		fout.open(filename);
+	}
+
+	void Log(const char* text)
+	{
+		fout << text;
+	}
+
+	~FileLogger()
+	{
+		fout.close();
+	}
+};
+
+class Worker
+{
+public:
+	void Work(Logger& logger)
+	{
+		// working...
+		logger.Log("Work started\n");
+		// working...
+		logger.Log("Working\n");
+
+		// working...
+		logger.Log("Work finished\n");
+	}
+};
+
+class Programmer
+{
+public:
+	virtual void WriteCode() = 0;
+};
+
+class CSharpProgrammer : public Programmer
+{
+public:
+	virtual void WriteCode()
+	{
+		cout << "C# code" << endl;
+	}
+};
+
+class CppProgrammer : public Programmer
+{
+public:
+	virtual void WriteCode()
+	{
+		cout << "C++ code" << endl;
+	}
+};
+
+class Employee :public CSharpProgrammer, public CppProgrammer
+{
+public:
+};
+
+int main()
+{
+	Employee* programmer = new Employee();
+	//programmer->WriteCode(); // Diamond Problem
+
+	Animal* animal = new Dog(10, 25);
+
+	cout << "animal age: " << animal->GetAge() << endl;
+
+	cout << "1 year later" << endl;
+
+	animal->SetAge(11);
+	cout << "animal age: " << animal->GetAge() << endl;
+
+	animal->MakeVoice();
+
+	Mouse* mouse = new Mouse();
+	mouse->SetAge(5);
+	cout << "mouse age: " << mouse->GetAge() << endl;
+
+	animal = mouse;
+
+	animal->MakeVoice();
+
+	animal->SetAge(5);
+	cout << "animal age: " << animal->GetAge() << endl;
+
+	Worker worker;
+
+	FileLogger file_logger("27.08.2020.txt");
+	ConsoleLogger console_logger;
+
+	//worker.Work(file_logger);
+	worker.Work(file_logger);
+	worker.Work(console_logger);
+
+	return 0;
+}
+
+vector<string> Split(const string& line, const string& separator)
 {
 	vector<string> result;
 
@@ -138,50 +303,4 @@ vector<string> Split(const string& line, const string& separator = " ")
 	}
 
 	return result;
-}
-
-int main()
-{
-	Split("Hello World! how are you?", " ");
-
-	int n;
-
-	ifstream fin("numbers.txt");
-
-	ofstream fout("data.csv");
-
-	string line;
-
-	vector<Customer> customers;
-
-	while (!fin.eof())
-	{
-		getline(fin, line);
-		auto data = Split(line, ",");
-
-		Customer customer;
-		customer.firstname = data[0];
-		customer.lastname = data[1];
-		customer.phoneNumber = data[2];
-		customer.address.country = data[3];
-		customer.address.city = data[4];
-		customer.address.street = data[5];
-
-		customers.push_back(customer);
-	}
-
-	sort(customers.begin(), customers.end(),
-		[](Customer& left, Customer& right) {return left.firstname > right.firstname; });
-
-	fout << "street" << "," << "firstname" << "," << "lastname" << endl;
-	for (auto& customer : customers)
-	{
-		fout << customer.address.street << "," << customer.firstname << "," << customer.lastname << endl;
-	}
-
-	//cout << "Hello World" << endl;
-
-	fin.close();
-
-	return 0;
 }
