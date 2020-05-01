@@ -1,0 +1,46 @@
+using System;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main()
+        {
+
+            while (true)
+            {
+                Console.WriteLine("fisrt number");
+                int num1 = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("second number");
+                int num2 = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("choose (+ | - | * | / | exit 'e')");
+                 string choose = Console.ReadLine();
+
+               switch(choose)
+                {
+                    case "+":
+                        Console.WriteLine($"{num1}+{num2}={num1 + num2}");
+                            break;
+                    case "-":
+                        Console.WriteLine($"{num1}-{num2}={num1 - num2}");
+                            break;
+                    case "*":
+                        Console.WriteLine($"{num1}*{num2}={num1 * num2}");
+                            break;
+                    case "/":
+                        Console.WriteLine($"{num1}/{num2}={num1 / num2}");
+                            break;
+                    case "e":
+                        break;
+                    default:
+                        break;
+                }
+                Console.ReadLine();
+                if (choose == "e")
+                break;
+            }
+        }
+    }
+}
